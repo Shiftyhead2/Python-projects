@@ -2,13 +2,17 @@ import string
 import random
 import secrets
 import time
+import json
 
 #Main function for generating passwords
-def PasswordGenerator(s,nop,special,letters_count,digital_count,special_count):
+def PasswordGenerator(s,nop,letters_count,digital_count,special_count):
     #Creation of generic variables
     print("Password generator booting up")
     i = 0
+    key = "password"
     final_passwords = []
+    saved_password = { }
+    saved_password.setdefault(key,[])
     fin_pass = ''
      #Checks if the size of the passwords if less or equal to 64
     time.sleep(1)
@@ -20,14 +24,7 @@ def PasswordGenerator(s,nop,special,letters_count,digital_count,special_count):
             for j in range(s):
                     ran_password = ''.join(secrets.choice(string.ascii_letters) for i in range(letters_count))
                     ran_password += ''.join(secrets.choice(string.digits) for i in range(digital_count))
-                    # Checks if the user wants any special characters
-                    if special == 1:
-                        ran_password += ''.join(secrets.choice(string.punctuation) for i in range(special_count))
-                    # Checks if the user has entered a number that is higher than 1 in which case it stops the
-                    # function from generating any passwords and stops the program
-                    elif special > 1:
-                        print("Invalid response detected! Restart the application to get your new passwords. Passwords will not be generated!")
-                        return
+                    ran_password += ''.join(secrets.choice(string.punctuation) for i in range(special_count))
                     # Passwords are generated and stored in a list
                     current_pass = list(ran_password)
                     random.shuffle(current_pass)
@@ -43,11 +40,25 @@ def PasswordGenerator(s,nop,special,letters_count,digital_count,special_count):
             print("This is the generated password:", final_passwords)
         else:
             print("There are no generated passwords")
+        time.sleep(0.5)
+        save = (int)(input("Which password do you want to save(0 - size of the password list - 1)? "))
+        print("Saving your password")
+        time.sleep(0.5)
+        if(save > len(final_passwords)):
+            for y in range(len(final_passwords)):
+                saved_password[key].append(final_passwords[y])
+        else:
+            saved_password[key].append(final_passwords[save])
+        #print(saved_password)
+        json_object = json.dumps(saved_password,sort_keys=True,ensure_ascii=False,indent=4)
+        with open("passwords.dat","w") as outfile:
+            outfile.write(json_object)
+        time.sleep(0.1)
+        print("Saving completed")
+
     else:
         print("The number size is higher than 64")
         return
-    time.sleep(1)
-    print("Generator shutting down!")
 
 
 def checkcharactersize(s,chars):
@@ -55,9 +66,8 @@ def checkcharactersize(s,chars):
         print("--WARNING: the character count is higher than the size of the passwords! The program will not generate passwords if you continue--")
 
 
-size = int(input("Enter a password size number: "))
+size = int(input("Enter a password size number(max 64): "))
 number_of_pass = int(input("Enter how many passwords do you want to generate: "))
-wants_special_characters = int(input("Do you want special characters(0 for no , 1 for yes)? "))
 character_count = 0
 number_of_let = int(input("Enter how many characters you want to have: "))
 time.sleep(0.5)
@@ -70,30 +80,21 @@ character_count += number_of_dig
 print("Current character count is: ", character_count)
 checkcharactersize(size,character_count)
 time.sleep(0.5)
-if(wants_special_characters == 1):
-    number_of_specials = int(input("Enter how many special characters you want to have: "))
-    character_count += number_of_specials
+number_of_specials = int(input("Enter how many special characters you want to have: "))
+character_count += number_of_specials
+time.sleep(0.5)
+print("Current character count is: ", character_count)
+time.sleep(0.5)
+print("Checking if everything is alright...")
+time.sleep(2)
+if(character_count > size):
     time.sleep(0.5)
-    print("Current character count is: ", character_count)
-    time.sleep(0.5)
-    print("Checking if everything is alright...")
-    time.sleep(2)
-    if(character_count > size):
-        time.sleep(0.5)
-        print("The character count is higher than the password size!")
-    else:
-        time.sleep(0.5)
-        print("Everything is fine")
-        time.sleep(0.5)
-        PasswordGenerator(size, number_of_pass, wants_special_characters , number_of_let,number_of_dig , number_of_specials)
+    print("The character count is higher than the password size!")
 else:
     time.sleep(0.5)
-    print("Checking if everything is alright...")
-    if (character_count > size):
-        time.sleep(0.5)
-        print("The character count is higher than the password size!")
-    else:
-        time.sleep(0.5)
-        print("Everything is fine")
-        time.sleep(0.5)
-        PasswordGenerator(size, number_of_pass, wants_special_characters, number_of_let, number_of_dig, 0)
+    print("Everything is fine")
+    time.sleep(0.5)
+    PasswordGenerator(size, number_of_pass, number_of_let,number_of_dig , number_of_specials)
+time.sleep(1)
+print("Generator shutting down!")
+exit = input("Press any key to exit the application")
