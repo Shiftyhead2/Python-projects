@@ -20,7 +20,6 @@ def PasswordGenerator(s,nop,letters_count,digital_count,special_count):
     time.sleep(1)
     if(s <= 64):
         while i < nop:
-            i += 1
             for j in range(s):
                     ran_password = ''.join(secrets.choice(string.ascii_letters) for i in range(letters_count))
                     ran_password += ''.join(secrets.choice(string.digits) for i in range(digital_count))
@@ -32,19 +31,20 @@ def PasswordGenerator(s,nop,letters_count,digital_count,special_count):
             final_passwords.append(fin_pass)
             time.sleep(0.05)
             print("Your password[",i,"]", "is:" , fin_pass)
-                #Checks the lenght of the stored passwords list
+            i += 1
+        #Checks the lenght of the stored passwords list
         time.sleep(0.5)
-        if len(final_passwords) > 1:
-            print("These are the generated passwords:", final_passwords)
-        elif len(final_passwords) == 1:
-            print("This is the generated password:", final_passwords)
+        if len(final_passwords) == 0:
+            print("There are no generated passwords!")
+            return
+        time.sleep(0.5)
+        save = (int)(input("Which password do you want to save(0 - size of the password list. \nType in a number higher or equal to the password list to save all of them)? "))
+        if save >= len(final_passwords):
+            print("Saving your passwords")
         else:
-            print("There are no generated passwords")
+            print("Saving your password")
         time.sleep(0.5)
-        save = (int)(input("Which password do you want to save(0 - size of the password list - 1)? "))
-        print("Saving your password")
-        time.sleep(0.5)
-        if(save > len(final_passwords)):
+        if(save >= len(final_passwords)):
             for y in range(len(final_passwords)):
                 saved_password[key].append(final_passwords[y])
         else:
